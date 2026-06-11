@@ -50,24 +50,24 @@ Tahap penyajian model ini memanfaatkan data yang telah diproses untuk keperluan 
 | Dataset | Sumber | Metode |
 |---|---|---|
 | Data Air Layak | [BPS - Persentase Rumah Tangga](https://www.bps.go.id/id/statistics-table/2/ODU0IzI=/persentase-rumah-tangga-yang-memiliki-akses-terhadap-sumber-air-minum-layak-menurut-provinsi-dan-klasifikasi-desa--persen-.html) | Unduh CSV / Web Scraping |
-| Data Kasus DBD | [KEMENKES](https://www.kemkes.go.id/id/category/profil-kesehatan) | Digitalisasi Manual (*Data Entry*) ke CSV |
+| Data Kasus DBD | [KEMENKES](https://www.kemkes.go.id/id/category/profil-kesehatan) | Digitalisasi Manual (Data Entry) ke CSV |
 
-**Catatan Khusus Ekstraksi:** Data kasus DBD diekstrak dari laporan tahunan berformat gambar/citra PDF. Oleh karena itu, tim kami melakukan pemrosesan digitalisasi manual (*data entry*) menjadi format mentah `.csv` sebelum dimasukkan ke dalam *pipeline* ETL.
+**Catatan Khusus Ekstraksi:** Data kasus DBD diekstrak dari laporan tahunan berformat gambar/citra PDF. Oleh karena itu, tim kami melakukan pemrosesan digitalisasi manual (data entry) menjadi format mentah `.csv` sebelum dimasukkan ke dalam pipeline ETL.
 
 ---
 
 ### 2. Transform (Pembersihan & Transformasi)
 
 **Pembersihan:**
-- **Menghapus data rusak:** Membuang baris data yang kosong (*missing value*) ataupun data ganda.
+- **Menghapus data rusak:** Membuang baris data yang kosong (missing value) ataupun data ganda.
 - **Menyeragamkan format teks:** Mengubah nama provinsi menjadi huruf kapital dan memperbaiki singkatan (contoh: "KEP. RIAU" menjadi "KEPULAUAN RIAU") untuk akurasi penggabungan data.
 - **Membuang data tidak relevan:** Menghapus baris agregasi nasional ("INDONESIA") agar model fokus pada data granular per provinsi.
 - **Memperbaiki tipe data:** Memastikan kolom metrik (seperti persentase air bersih dan jumlah kasus) terbaca dengan benar sebagai tipe data numerik.
 
 **Transformasi:**
-- **Menambahkan label waktu:** Membuat kolom baru berisi keterangan tahun (2021-2024) untuk analisis *time-series*.
-- **Menggabungkan data (*Merging*):** Menyatukan dataset DBD dan Air Bersih menjadi satu *dataframe* utuh berdasarkan *primary key* gabungan (`Provinsi` dan `Tahun`).
-- **Agregasi (*Grouping*):** Menghitung nilai rata-rata dari 4 tahun terakhir untuk menstabilkan titik data sebelum masuk ke model *Machine Learning*.
+- **Menambahkan label waktu:** Membuat kolom baru berisi keterangan tahun (2021-2024) untuk analisis time-series.
+- **Menggabungkan data (*Merging*):** Menyatukan dataset DBD dan Air Bersih menjadi satu dataframe utuh berdasarkan primary key gabungan (`Provinsi` dan `Tahun`).
+- **Agregasi (*Grouping*):** Menghitung nilai rata-rata dari 4 tahun terakhir untuk menstabilkan titik data sebelum masuk ke model Machine Learning.
 
 ---
 
@@ -76,15 +76,15 @@ Tahap penyajian model ini memanfaatkan data yang telah diproses untuk keperluan 
 - **Target:** Sebuah tabel baru bernama `dbd_airminum` di dalam *database* **MySQL** pada *cloud server* **Aiven**.
 - **Metode:**
   - Fungsi `to_sql()` dari Pandas digunakan untuk menulis data secara otomatis ke tabel tujuan.
-  - Konfigurasi koneksi diatur menggunakan `engine` dari *library* **SQLAlchemy** yang disambungkan melalui *driver* `pymysql`.
-  - Verifikasi integritas data dilakukan dengan menarik dan mencetak 5 baris pertama dari *database* menggunakan perintah `pd.read_sql()`.
+  - Konfigurasi koneksi diatur menggunakan `engine` dari library **SQLAlchemy** yang disambungkan melalui driver `pymysql`.
+  - Verifikasi integritas data dilakukan dengan menarik dan mencetak 5 baris pertama dari database menggunakan perintah `pd.read_sql()`.
 
 ---
 
 ## Arsitektur / Workflow ETL
 
-- **Alur Modular:** Seluruh proses ETL dibungkus dalam fungsi utama (seperti `transformasi()`) yang secara otomatis menjalankan tahapan pembacaan, pembersihan, penanganan nilai kosong, hingga penggabungan data.
-- **Eksekusi Sekuensial:** Kode disusun secara berurutan dan terstruktur agar alur datanya mudah diikuti, direproduksi, dan dievaluasi langsung di dalam *notebook* Google Colab.
+- **Alur Modular:** Seluruh proses ETL dibungkus dalam fungsi utama transformasi() yang secara otomatis menjalankan tahapan pembacaan, pembersihan, penanganan nilai kosong, hingga penggabungan data.
+- **Eksekusi Sekuensial:** Kode disusun secara berurutan dan terstruktur agar alur datanya mudah diikuti, direproduksi, dan dievaluasi langsung di dalam notebook Google Colab.
 
 ---
 
@@ -110,12 +110,8 @@ Terdapat 2 modul utama dalam bentuk Jupyter Notebook:
 Algoritma yang digunakan adalah **K-Means Clustering**. Untuk menghindari bias dalam menentukan jumlah zona, kami menerapkan **Metode Elbow** (menganalisis visualisasi penurunan metrik WCSS dari $K=1$ hingga $K=10$). Ditemukan bahwa kurva melandai secara optimal di angka **$K=3$**, sehingga provinsi di Indonesia dibagi menjadi 3 kategori zona kerawanan.
 
 **Tautan Penting:**
-- **ETL Pipeline:** `[MASUKKAN LINK FILE GITHUB DI SINI]`
-- **Machine Learning:** `[MASUKKAN LINK FILE GITHUB DI SINI]`
-- **Looker Dashboard:** [Klik di sini untuk melihat Dashboard (Data Studio)](https://datastudio.google.com/reporting/ee37f130-9199-4607-a6c7-e2c58c5f83b4)
+- **ETL Pipeline:** https://github.com/ArDS1401/sanitasi-terhadap-kasus-dbd/blob/main/Pipeline%20(1).ipynb
+- **Machine Learning:** (https://github.com/ArDS1401/sanitasi-terhadap-kasus-dbd/blob/main/MachineLearning_kel8.ipynb)
+- **Looker Dashboard:** (https://datastudio.google.com/reporting/ee37f130-9199-4607-a6c7-e2c58c5f83b4)
 
 ---
-
-## Lisensi
-
-Proyek ini dibuat untuk keperluan akademik — **UAS Data Engineering**, Kelompok 8.
