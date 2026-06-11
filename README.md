@@ -107,5 +107,6 @@ Serving Machine adalah tahap penyajian data dan model yang telah diproses agar d
   - Machine Learning:
     
   - Looker:
+    https://datastudio.google.com/reporting/ee37f130-9199-4607-a6c7-e2c58c5f83b4 
 
 ---
