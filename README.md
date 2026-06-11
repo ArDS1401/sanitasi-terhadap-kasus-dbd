@@ -50,7 +50,7 @@ Tahap penyajian model ini memanfaatkan data yang telah diproses untuk keperluan 
 | Dataset | Sumber | Metode |
 |---|---|---|
 | Data Air Layak | [BPS - Persentase Rumah Tangga](https://www.bps.go.id/id/statistics-table/2/ODU0IzI=/persentase-rumah-tangga-yang-memiliki-akses-terhadap-sumber-air-minum-layak-menurut-provinsi-dan-klasifikasi-desa--persen-.html) | Unduh CSV / Web Scraping |
-| Data Kasus DBD (2021-2024) | Laporan Profil Kesehatan Kemenkes (4 Dokumen PDF) | Digitalisasi Manual (*Data Entry*) ke CSV |
+| Data Kasus DBD | [KEMENKES](https://www.kemkes.go.id/id/category/profil-kesehatan) | Digitalisasi Manual (*Data Entry*) ke CSV |
 
 **Catatan Khusus Ekstraksi:** Data kasus DBD diekstrak dari laporan tahunan berformat gambar/citra PDF. Oleh karena itu, tim kami melakukan pemrosesan digitalisasi manual (*data entry*) menjadi format mentah `.csv` sebelum dimasukkan ke dalam *pipeline* ETL.
 
@@ -91,7 +91,7 @@ Tahap penyajian model ini memanfaatkan data yang telah diproses untuk keperluan 
 ## Teknologi yang Digunakan
 
 - **Bahasa Pemrograman:** Python 3.x
-- **Environment:** Google Colab, Visual Studio Code
+- **Environment:** Google Colab
 - **Data Wrangling:** Pandas, NumPy
 - **Database & Konektor:** MySQL (Aiven Cloud), SQLAlchemy, PyMySQL
 - **Machine Learning:** Scikit-learn, StandardScaler
