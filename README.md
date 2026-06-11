@@ -43,90 +43,69 @@ Serving Machine adalah tahap penyajian data dan model yang telah diproses agar d
 
 ## Pipeline 
 
-### 1. Extract — Pengambilan Data
+### 1. Extract (Pengambilan Data)
 
 | Dataset | Sumber | Metode |
 |---|---|---|
-| Data Kasus DBD | [SIPSN KLHK](https://sipsn.menlhk.go.id/sipsn/public/data/timbulan) | JSON API |
-| Data | [BPS](https://www.bps.go.id/id/statistics-table/2/OTU5IzI=/banyaknya-desa-kelurahan-menurut-jenis-pencemaran-lingkungan-hidup.html) | Scraping HTML (Selenium) |
-| Jumlah Penduduk per Provinsi | [BPS Sulut](https://sulut.bps.go.id/id/statistics-table/2/OTU4IzI=/jumlah-penduduk-menurut-provinsi-di-indonesia.html) | Scraping HTML (Selenium) |
+| Data Kasus DBD | [KEMENKES](https://www.kemkes.go.id/id/category/profil-kesehatan) | JSON API |
+| Data Air Layak| [BPS](https://www.bps.go.id/id/statistics-table/2/ODU0IzI=/persentase-rumah-tangga-yang-memiliki-akses-terhadap-sumber-air-minum-layak-menurut-provinsi-dan-klasifikasi-desa--persen-.html) | Scraping HTML (Selenium) |
 
-### 2. Transform — Pembersihan & Transformasi
+---
+### 2. Transform (Pembersihan & Transformasi)
 
 **Pembersihan:**
-- Menghapus baris duplikat dan kolom tidak relevan
-- Menangani missing value (hapus / imputasi)
-- Standarisasi penulisan nama provinsi (e.g., `"JAKARTA"` → `"Jakarta"`)
-- Memastikan tipe data konsisten (tahun: integer, penduduk & sampah: numerik)
+- Menghapus data rusak: Membuang baris data yang kosong (missing value) ataupun data ganda.
+- Menyeragamkan format teks: Mengubah nama provinsi menjadi huruf kapital semua dan memperbaiki singkatan (contoh: "KEP. RIAU" menjadi "KEPULAUAN RIAU").
+- Membuang data tidak relevan: Menghapus baris data total nasional ("INDONESIA") agar fokus pada data per provinsi.
+- Memperbaiki tipe data: Memastikan kolom angka (seperti persentase air bersih) terbaca dengan benar sebagai tipe data numerik.
 
 **Transformasi:**
-- Merge dataset berdasarkan `provinsi` dan `tahun`
-- Feature engineering:
-  - **Sampah per Kapita** (kg/orang) = Total Timbulan Sampah ÷ Jumlah Penduduk
-  - **Total Pencemaran** = Total desa yang tercemar (air + tanah + udara)
-- Konversi satuan dari ton ke kilogram
+- Menambahkan label waktu: Membuat kolom baru berisi keterangan tahun (2021-2024) pada setiap baris data.
+- Menyaring kolom: Hanya mempertahankan kolom yang benar-benar penting untuk dianalisis.
+- Menggabungkan data: Menyatukan tabel DBD dan tabel Air Bersih menjadi satu tabel utuh berdasarkan kesamaan Provinsi dan Tahun.
+- Merapikan hasil akhir: Mengganti nama kolom yang acak menjadi lebih jelas, lalu menyimpannya sebagai file data gabungan yang siap pakai.
+  
+---
+### 3. Load (Penyimpanan ke Database)
 
-### 3. Load — Penyimpanan ke Database
-
-- **Target:** PostgreSQL (hosted di Aiven)
-- **Tabel utama:** `data_lingkungan`
-- **Skema kolom:**
-
-| Kolom | Tipe |
-|---|---|
-| Provinsi | VARCHAR |
-| Jumlah Penduduk 2024 | BIGINT |
-| Timbulan Sampah Tahunan (kg) | FLOAT |
-| Pencemaran Air | INT |
-| Pencemaran Tanah | INT |
-| Pencemaran Udara | INT |
-
-- **Proses:** CSV audit → SQLAlchemy insert → validasi duplikasi
-- **Integritas:** Primary key gabungan `(provinsi, tahun)`, update otomatis jika data berubah
+* #### Target
+    - Sebuah tabel baru (misalnya diberi nama dbd_air_bersih) di dalam database pada server Aiven. Tabel ini merupakan output utama yang memuat data gabungan antara kelayakan sanitasi air dan jumlah kasus DBD. Tabel ini dapat diakses untuk melakukan analisis langsung dari database.
+ 
+* #### Metode
+    - Fungsi to_sql() dari pandas digunakan untuk menulis data dari DataFrame langsung ke tabel di database PostgreSQL
+    - konfigurasi fungsi to_sql() diatur dengan parameter:
+        * name: Untuk menentukan nama tabel tujuan di database.
+        * con: Untuk menghubungkan sistem ke server Aiven menggunakan objek engine dari SQLAlchemy.
+    - Data di cek keberhasilan pemindahannya dengan menarik 5 baris pertama dari database menggunakan perintah pd.read_sql() dan menampilkannya melalui df.head().
 
 ---
 
-##  Machine Learning
+##  Arsitektur / Workflow ETL
 
-- **Model:** Regresi Linear (Scikit-learn)
-- **Tujuan:** Prediksi pengelolaan sampah berdasarkan jumlah penduduk dan tingkat pencemaran
-- **Serving:** Visualisasi interaktif melalui Streamlit
+* #### Alur Modular:
+  - Fungsi Terpusat: Seluruh proses ETL dibungkus dalam satu fungsi utama (misalnya transformasi()) yang secara otomatis menjalankan tahapan pembacaan, pembersihan, penanganan nilai kosong, hingga penggabungan data.
 
----
-
-## Teknologi yang Digunakan
-
-| Kategori | Tools |
-|---|---|
-| ETL | Python, Selenium, Pandas, NumPy, SQLAlchemy |
-| Machine Learning | Scikit-learn |
-| Database | PostgreSQL (Aiven) |
-| Visualisasi | Matplotlib, Seaborn, Streamlit |
+  - Eksekusi Sekuensial: Kode disusun secara berurutan dan terstruktur agar alur datanya mudah diikuti, dijalankan, dan dievaluasi langsung di dalam notebook Google Colab.
+    
+* #### Tools yang Digunakan:
+  - Python 3.x
+  - Platform: Google Colab
+  - Library: pandas, numpy, sqlalchemy, matplotlib, seaborn, sklearn, scipy
 
 ---
 
-## Struktur Proyek
-
-```
-UAS_DATAENGGINEERING/
-├── UAS_DATA_ENGGINEER_1.ipynb   # ETL Pipeline
-├── ML.ipynb                      # Machine Learning
-└── streamlit_app.py              # Aplikasi Visualisasi
-```
-
----
-
-## Link Proyek
-
-| Bagian | Link |
-|---|---|
-| ETL Pipeline | [UAS_DATA_ENGGINEER_1.ipynb](https://github.com/ardhiyondaputra/UAS_DATAENGGINEERING/blob/main/UAS_DATA_ENGGINEER_1.ipynb) |
-| Machine Learning | [ML.ipynb](https://github.com/ardhiyondaputra/UAS_DATAENGGINEERING/blob/main/ML.ipynb) |
-| Streamlit App | [streamlit_app.py](https://github.com/ardhiyondaputra/UAS_DATAENGGINEERING/blob/main/streamlit_app.py) |
-| Looker |
+## Kode Program
+* #### Struktur Kode:
+  - Terdapat 2 notebook: ETL dan Machine Learning
+  - Nama Variabel dan fungsi deskriptif: df_merge, clean_dataframe(), Jumlah_Kasus, Akses_Air_Minum, dll.
+    
+* #### Machin Leraning:
+  
+* #### Link Proyek:
+  - ETL Pipeline:
+    
+  - Machine Learning:
+    
+  - Looker:
 
 ---
-
-## Lisensi
-
-Proyek ini dibuat untuk keperluan akademik — **UAS Data Engineering**, Kelompok 8.
