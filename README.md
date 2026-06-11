@@ -69,7 +69,7 @@ Serving Machine adalah tahap penyajian data dan model yang telah diproses agar d
 ### 3. Load (Penyimpanan ke Database)
 
 * #### Target
-    - Sebuah tabel baru (misalnya diberi nama dbd_air_bersih) di dalam database pada server Aiven. Tabel ini merupakan output utama yang memuat data gabungan antara kelayakan sanitasi air dan jumlah kasus DBD. Tabel ini dapat diakses untuk melakukan analisis langsung dari database.
+    - Sebuah tabel baru dbd_airminum di dalam database pada server Aiven. Tabel ini merupakan output utama yang memuat data gabungan antara kelayakan sanitasi air dan jumlah kasus DBD. Tabel ini dapat diakses untuk melakukan analisis langsung dari database.
  
 * #### Metode
     - Fungsi to_sql() dari pandas digunakan untuk menulis data dari DataFrame langsung ke tabel di database PostgreSQL
@@ -83,7 +83,7 @@ Serving Machine adalah tahap penyajian data dan model yang telah diproses agar d
 ##  Arsitektur / Workflow ETL
 
 * #### Alur Modular:
-  - Fungsi Terpusat: Seluruh proses ETL dibungkus dalam satu fungsi utama (misalnya transformasi()) yang secara otomatis menjalankan tahapan pembacaan, pembersihan, penanganan nilai kosong, hingga penggabungan data.
+  - Fungsi Terpusat: Seluruh proses ETL dibungkus dalam satu fungsi utama transformasi() yang secara otomatis menjalankan tahapan pembacaan, pembersihan, penanganan nilai kosong, hingga penggabungan data.
 
   - Eksekusi Sekuensial: Kode disusun secara berurutan dan terstruktur agar alur datanya mudah diikuti, dijalankan, dan dievaluasi langsung di dalam notebook Google Colab.
     
