@@ -1,0 +1,36 @@
+No,Provinsi,Jumlah Penduduk,Jumlah Kasus,Incidence Rate per 100.000 Penduduk,Meninggal,CFR (%)
+1,Aceh,5459114,366,6.7,7,1.91
+2,Sumatera Utara,14954028,2918,19.5,14,0.48
+3,Sumatera Barat,5610859,654,11.7,6,0.92
+4,Riau,7066464,1038,14.7,10,0.96
+5,Jambi,3641279,357,9.8,5,1.40
+6,Sumatera Selatan,8702628,1135,13.0,3,0.26
+7,Bengkulu,2016437,628,31.1,1,0.16
+8,Lampung,8609884,2271,26.4,8,0.35
+9,Kepulauan Bangka Belitung,1488245,864,58.1,20,2.31
+10,Kepulauan Riau,2378795,1925,80.9,17,0.88
+11,DKI Jakarta,10645542,3092,29.0,0,0.00
+12,Jawa Barat,50103251,23959,47.8,212,0.88
+13,Jawa Tengah,34917040,4468,12.8,121,2.71
+14,DI Yogyakarta,3970220,1186,29.9,12,1.01
+15,Jawa Timur,40156672,6760,16.8,72,1.07
+16,Banten,13074189,2136,16.3,16,0.75
+17,Bali,4466595,2673,59.8,4,0.15
+18,Nusa Tenggara Barat,5298471,2697,50.9,21,0.78
+19,Nusa Tenggara Timur,5588744,2538,45.4,14,0.55
+20,Kalimantan Barat,5162937,664,12.9,4,0.60
+21,Kalimantan Tengah,2722168,189,6.9,0,0.00
+22,Kalimantan Selatan,4319794,176,4.1,0,0.00
+23,Kalimantan Timur,3708936,2898,78.1,23,0.79
+24,Kalimantan Utara,721181,172,23.8,4,2.33
+25,Sulawesi Utara,2530967,1196,47.3,32,2.68
+26,Sulawesi Tengah,3120863,671,21.5,5,0.75
+27,Sulawesi Selatan,8956181,3585,40.0,35,0.98
+28,Sulawesi Tenggara,2743155,674,24.6,8,1.19
+29,Gorontalo,1195883,557,46.6,15,2.69
+30,Sulawesi Barat,1396749,339,24.3,6,1.77
+31,Maluku,1805376,169,9.4,3,1.78
+32,Maluku Utara,1268866,318,25.1,7,2.20
+33,Papua Barat,1008698,147,14.6,0,0.00
+34,Papua,3438243,98,2.9,0,0.00
+Total,Indonesia,272248454,73518,27.0,705,0.96
